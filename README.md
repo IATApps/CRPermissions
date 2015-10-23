@@ -1,6 +1,6 @@
 # CRPermissions
 
-[![CI Status](http://img.shields.io/travis/Cody Winton/CRPermissions.svg?style=flat)](https://travis-ci.org/Cody Winton/CRPermissions)
+[![CI Status](http://img.shields.io/travis/codywinton/CRPermissions.svg?style=flat)](https://travis-ci.org/codywinton/CRPermissions)
 [![Version](https://img.shields.io/cocoapods/v/CRPermissions.svg?style=flat)](http://cocoapods.org/pods/CRPermissions)
 [![License](https://img.shields.io/cocoapods/l/CRPermissions.svg?style=flat)](http://cocoapods.org/pods/CRPermissions)
 [![Platform](https://img.shields.io/cocoapods/p/CRPermissions.svg?style=flat)](http://cocoapods.org/pods/CRPermissions)
