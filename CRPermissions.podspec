@@ -17,9 +17,8 @@ Pod::Spec.new do |s|
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
-  s.description      = <<-DESC
-                       UIViewController with delegate methods that give an aesthetically pleasing way to request system permissions from your users.
-                       DESC
+  # s.description      = <<-DESC
+  #                     DESC
 
   s.homepage         = "http://codywinton.com"
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"

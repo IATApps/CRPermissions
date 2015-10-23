@@ -1,0 +1,6 @@
+framework module Pods_CRPermissionsTests {
+  umbrella header "Pods-CRPermissionsTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
