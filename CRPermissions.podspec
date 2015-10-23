@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "CRPermissions"
-  s.version          = "1.0"
+  s.version          = "0.5"
   s.summary          = "UIViewController with delegate methods that give an aesthetically pleasing way to request system permissions from your users."
 
 # This description is used to generate tags and improve search results.

@@ -19,12 +19,12 @@ CRPermissions is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "CRPermissions"
+pod 'CRPermissions'
 ```
 
 ## Author
 
-Cody Winton, cody@credntia.com
+Cody Winton, cody.t.winton@gmail.com
 
 ## License
 
