@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
   s.homepage         = "http://codywinton.com"
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
   s.license          = 'MIT'
-  s.author           = { "Cody Winton" => "cody@credntia.com" }
+  s.author           = { "Cody Winton" => "cody.t.winton@gmail.com" }
   s.source           = { :git => "https://github.com/codywinton/CRPermissions.git", :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/codytwinton'
 
