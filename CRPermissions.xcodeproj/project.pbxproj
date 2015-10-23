@@ -77,7 +77,7 @@
 		6A2805CB1BDAD0DD00B42F0F = {
 			isa = PBXGroup;
 			children = (
-				6A2805D61BDAD0DD00B42F0F /* CRPermissions */,
+				6A2805D61BDAD0DD00B42F0F /* CRPermissionsExample */,
 				6A2805EB1BDAD0DD00B42F0F /* CRPermissionsTests */,
 				6A2805F61BDAD0DD00B42F0F /* CRPermissionsUITests */,
 				6A2805D51BDAD0DD00B42F0F /* Products */,
@@ -94,7 +94,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		6A2805D61BDAD0DD00B42F0F /* CRPermissions */ = {
+		6A2805D61BDAD0DD00B42F0F /* CRPermissionsExample */ = {
 			isa = PBXGroup;
 			children = (
 				6A2805D71BDAD0DD00B42F0F /* AppDelegate.swift */,
@@ -104,7 +104,7 @@
 				6A2805E01BDAD0DD00B42F0F /* LaunchScreen.storyboard */,
 				6A2805E31BDAD0DD00B42F0F /* Info.plist */,
 			);
-			path = CRPermissions;
+			path = CRPermissionsExample;
 			sourceTree = "<group>";
 		};
 		6A2805EB1BDAD0DD00B42F0F /* CRPermissionsTests */ = {
@@ -482,6 +482,7 @@
 				6A2805FE1BDAD0DD00B42F0F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6A2805FF1BDAD0DD00B42F0F /* Build configuration list for PBXNativeTarget "CRPermissionsTests" */ = {
 			isa = XCConfigurationList;
@@ -490,6 +491,7 @@
 				6A2806011BDAD0DD00B42F0F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6A2806021BDAD0DD00B42F0F /* Build configuration list for PBXNativeTarget "CRPermissionsUITests" */ = {
 			isa = XCConfigurationList;
@@ -498,6 +500,7 @@
 				6A2806041BDAD0DD00B42F0F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

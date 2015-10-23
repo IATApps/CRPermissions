@@ -16,5 +16,5 @@ Pod::Spec.new do |s|
   s.requires_arc = true
   s.frameworks   = ['AddressBook', 'AssetsLibrary', 'AVFoundation', 'CoreLocation', 'EventKit']
 
-  s.source_files = 'Source/*.swift'
+  s.source_files = 'CRPermissions/*.swift'
 end
