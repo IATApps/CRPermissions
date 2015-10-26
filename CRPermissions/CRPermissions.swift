@@ -15,13 +15,10 @@ import CoreLocation
 import Photos
 import EventKit
 
-// MARK: Delegate
+// MARK: Blocks
 
-protocol CRPermissionDelegate {
-	func permissionResult(type: CRPermissionType, hasPermission: Bool, systemResult: CRPermissionResult, systemStatus: CRPermissionAuthStatus)
-}
-
-//typealias EKEventStoreRequestAccessCompletionHandler = (Bool, NSError?) -> Void
+typealias CRPermissionCompletionBlock = (hasPermission: Bool, systemResult: CRPermissionResult, systemStatus: CRPermissionAuthStatus) -> Void
+typealias CRLocationPermissionCompletionBlock = (type: CRLocationType, hasPermission: Bool, systemResult: CRPermissionResult, systemStatus: CRPermissionAuthStatus) -> Void
 
 // MARK: - Structs
 
@@ -75,8 +72,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 	
 	// MARK: - Variables
 	
-	var delegate: CRPermissionDelegate? = nil
-	
+	private var locationCompletionBlock: CRLocationPermissionCompletionBlock? = nil
 	private var locationType = CRLocationType.Default
 	
 	required override init() {
@@ -244,15 +240,15 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 	
 	// MARK: - Instance Functions
 	
-	func requestCameraPermissions(delegate: CRPermissionDelegate?) {
-		requestPermissions(forMediaType: AVMediaTypeVideo, delegate: delegate)
+	func requestCameraPermissions(completion: CRPermissionCompletionBlock?) {
+		requestPermissions(forMediaType: AVMediaTypeVideo, completion: completion)
 	}
 	
-	func requestMicrophonePermissions(delegate: CRPermissionDelegate?) {
-		requestPermissions(forMediaType: AVMediaTypeAudio, delegate: delegate)
+	func requestMicrophonePermissions(completion: CRPermissionCompletionBlock?) {
+		requestPermissions(forMediaType: AVMediaTypeAudio, completion: completion)
 	}
 	
-	func requestPhotosPermissions(delegate: CRPermissionDelegate?) {
+	func requestPhotosPermissions(completion: CRPermissionCompletionBlock?) {
 		
 		let type = CRPermissionType.Photos
 		let preStatus = CRPermissions.authStatus(forType: type)
@@ -265,15 +261,15 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 				
 				let status = CRPermissions.authStatus(forType: type)
 				let systemResult = CRPermissions.permissionResult(forStatus: status)
-				self.delegate?.permissionResult(type, hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+				completion?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
 			}
 			
 		default:
-			self.delegate?.permissionResult(type, hasPermission: preStatus == .Authorized, systemResult: .NoActionTaken, systemStatus: preStatus)
+			completion?(hasPermission: preStatus == .Authorized, systemResult: .NoActionTaken, systemStatus: preStatus)
 		}
 	}
 	
-	func requestContactsPermissions(delegate: CRPermissionDelegate?) {
+	func requestContactsPermissions(completion: CRPermissionCompletionBlock?) {
 		
 		let type = CRPermissionType.Contacts
 		let preStatus = CRPermissions.authStatus(forType: type)
@@ -289,7 +285,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 					
 					let status = CRPermissions.authStatus(forType: type)
 					let systemResult = CRPermissions.permissionResult(forStatus: status)
-					self.delegate?.permissionResult(type, hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+					completion?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
 				}
 			}
 				
@@ -303,25 +299,27 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 					
 					let status = CRPermissions.authStatus(forType: type)
 					let systemResult = CRPermissions.permissionResult(forStatus: status)
-					self.delegate?.permissionResult(type, hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+					completion?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
 				}
 			}
 			
 			
 		default:
-			self.delegate?.permissionResult(type, hasPermission: preStatus == .Authorized, systemResult: .NoActionTaken, systemStatus: preStatus)
+			completion?(hasPermission: preStatus == .Authorized, systemResult: .NoActionTaken, systemStatus: preStatus)
 		}
 	}
 	
-	func requestEventsPermissions(delegate: CRPermissionDelegate?) {
-		requestPermissions(forEventType: .Event, delegate: delegate)
+	func requestEventsPermissions(completion: CRPermissionCompletionBlock?) {
+		requestPermissions(forEventType: .Event, completion: completion)
 	}
 	
-	func requestRemindersPermissions(delegate: CRPermissionDelegate?) {
-		requestPermissions(forEventType: .Reminder, delegate: delegate)
+	func requestRemindersPermissions(completion: CRPermissionCompletionBlock?) {
+		requestPermissions(forEventType: .Reminder, completion: completion)
 	}
 	
-	func requestLocationPermissions(locationType: CRLocationType, delegate: CRPermissionDelegate?) {
+	func requestLocationPermissions(locationType: CRLocationType, completion: CRLocationPermissionCompletionBlock?) {
+		
+		locationCompletionBlock = completion
 		
 		let type = CRPermissionType.Location
 		let preStatus = CRPermissions.authStatus(forType: type)
@@ -344,14 +342,14 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 			locationManager.startUpdatingLocation()
 			
 		default:
-			self.delegate?.permissionResult(type, hasPermission: preStatus == .Authorized, systemResult: .NoActionTaken, systemStatus: preStatus)
+			locationCompletionBlock?(type: locationType, hasPermission: preStatus == .Authorized, systemResult: .NoActionTaken, systemStatus: preStatus)
 		}
 	}
 	
 	
 	// MARK: Convenience Instance Functions
 	
-	private func requestPermissions(forMediaType mediaType: String, delegate: CRPermissionDelegate?) {
+	private func requestPermissions(forMediaType mediaType: String, completion: CRPermissionCompletionBlock?) {
 		
 		let type: CRPermissionType = mediaType == AVMediaTypeAudio ? .Microphone : .Camera
 		
@@ -365,15 +363,15 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 				
 				let status = CRPermissions.authStatus(forType: type)
 				let systemResult = CRPermissions.permissionResult(forStatus: status)
-				self.delegate?.permissionResult(type, hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+				completion?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
 			}
 			
 		default:
-			self.delegate?.permissionResult(type, hasPermission: preStatus == .Authorized, systemResult: .NoActionTaken, systemStatus: preStatus)
+			completion?(hasPermission: preStatus == .Authorized, systemResult: .NoActionTaken, systemStatus: preStatus)
 		}
 	}
 	
-	func requestPermissions(forEventType eventType: EKEntityType, delegate: CRPermissionDelegate?) {
+	func requestPermissions(forEventType eventType: EKEntityType, completion: CRPermissionCompletionBlock?) {
 		
 		let type: CRPermissionType = eventType == .Event ? .Events : .Reminders
 		let preStatus = CRPermissions.authStatus(forType: type)
@@ -387,11 +385,11 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 				
 				let status = CRPermissions.authStatus(forType: type)
 				let systemResult = CRPermissions.permissionResult(forStatus: status)
-				self.delegate?.permissionResult(type, hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+				completion?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
 			}
 			
 		default:
-			self.delegate?.permissionResult(type, hasPermission: preStatus == .Authorized, systemResult: .NoActionTaken, systemStatus: preStatus)
+			completion?(hasPermission: preStatus == .Authorized, systemResult: .NoActionTaken, systemStatus: preStatus)
 		}
 	}
 	
@@ -399,9 +397,8 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 	
 	func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
 		
-		let type = CRPermissionType.Location
 		let status = CRPermissions.locationAuthStatus(locationType)
 		let systemResult = CRPermissions.permissionResult(forStatus: status)
-		self.delegate?.permissionResult(type, hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+		self.locationCompletionBlock?(type: self.locationType, hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
 	}
 }
