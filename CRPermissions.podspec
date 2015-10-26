@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
 
   s.platform     = :ios, '8.0'
   s.requires_arc = true
-  s.frameworks   = ['AddressBook', 'AssetsLibrary', 'AVFoundation', 'CoreLocation', 'EventKit', 'UIKit']
+  s.frameworks   = ['AddressBook', 'AssetsLibrary', 'AVFoundation', 'Contacts', 'CoreLocation', 'EventKit', 'UIKit']
 
   s.source_files = 'CRPermissions/*.swift'
   s.resource_bundles = {
