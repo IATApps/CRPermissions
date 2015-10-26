@@ -33,16 +33,13 @@ enum CRPermissionType: Int {
 }
 
 enum CRPermissionResult: Int {
-	/// User was not given the chance to take action.
-	/// This can happen if the permission was
-	/// already granted, denied, or restricted.
+	/// User was not given the chance to take action. This can happen if the permission was already granted, denied, or restricted.
 	case NoActionTaken
 	/// User declined access in the user dialog or system dialog.
 	case Denied
 	/// User granted access in the user dialog or system dialog.
 	case Granted
-	/// The iOS parental permissions prevented access.
-	/// This outcome would only happen on the system dialog.
+	/// The iOS parental permissions prevented access. This outcome would only happen on the system dialog.
 	case ParentallyRestricted
 }
 
@@ -58,8 +55,11 @@ enum CRPermissionAuthStatus: Int {
 }
 
 enum CRLocationType: Int {
+	/// Defaults to WhenInUse
 	case Default
+	/// Always have Access, even in background.
 	case Always
+	/// Access when app is in foreground.
 	case WhenInUse
 }
 
