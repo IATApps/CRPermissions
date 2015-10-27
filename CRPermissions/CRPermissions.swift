@@ -339,8 +339,6 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 				locationManager.requestWhenInUseAuthorization()
 			}
 			
-			locationManager.startUpdatingLocation()
-			
 		default:
 			locationCompletionBlock?(type: locationType, hasPermission: preStatus == .Authorized, systemResult: .NoActionTaken, systemStatus: preStatus)
 		}
@@ -400,5 +398,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		let status = CRPermissions.locationAuthStatus(locationType)
 		let systemResult = CRPermissions.permissionResult(forStatus: status)
 		self.locationCompletionBlock?(type: self.locationType, hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+		
+		manager.stopUpdatingLocation()
 	}
 }
