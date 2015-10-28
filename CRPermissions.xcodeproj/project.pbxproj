@@ -22,6 +22,9 @@
 		6A66DDF81BDEBDBD00E5DD45 /* CRPermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A66DDF71BDEBDBD00E5DD45 /* CRPermissionsViewController.swift */; };
 		6A66DDF91BDEBDBD00E5DD45 /* CRPermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A66DDF71BDEBDBD00E5DD45 /* CRPermissionsViewController.swift */; };
 		6A66DDFA1BDEBDBD00E5DD45 /* CRPermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A66DDF71BDEBDBD00E5DD45 /* CRPermissionsViewController.swift */; };
+		6AEA8E511BE034CA00562FAE /* CRPermissionsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEA8E501BE034CA00562FAE /* CRPermissionsExtensions.swift */; };
+		6AEA8E521BE034CA00562FAE /* CRPermissionsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEA8E501BE034CA00562FAE /* CRPermissionsExtensions.swift */; };
+		6AEA8E531BE034CA00562FAE /* CRPermissionsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEA8E501BE034CA00562FAE /* CRPermissionsExtensions.swift */; };
 		C8E402841BE12B541D245459 /* Pods_CRPermissionsTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6D0B5CA991C0A94E91955FB /* Pods_CRPermissionsTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -61,6 +64,7 @@
 		6A2805F91BDAD0DD00B42F0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6A66DDF11BDEA5E000E5DD45 /* CRPermissions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CRPermissions.swift; sourceTree = "<group>"; };
 		6A66DDF71BDEBDBD00E5DD45 /* CRPermissionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CRPermissionsViewController.swift; sourceTree = "<group>"; };
+		6AEA8E501BE034CA00562FAE /* CRPermissionsExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CRPermissionsExtensions.swift; sourceTree = "<group>"; };
 		9777BE8C0F6AAABB6D7D588D /* Pods-CRPermissionsUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CRPermissionsUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-CRPermissionsUITests/Pods-CRPermissionsUITests.release.xcconfig"; sourceTree = "<group>"; };
 		B1B8AD590866DC9343BACA60 /* Pods-CRPermissionsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CRPermissionsTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-CRPermissionsTests/Pods-CRPermissionsTests.release.xcconfig"; sourceTree = "<group>"; };
 		B2BE623B428F38AC460CED9C /* Pods_CRPermissionsUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CRPermissionsUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -178,6 +182,7 @@
 			isa = PBXGroup;
 			children = (
 				6A66DDF11BDEA5E000E5DD45 /* CRPermissions.swift */,
+				6AEA8E501BE034CA00562FAE /* CRPermissionsExtensions.swift */,
 				6A66DDF71BDEBDBD00E5DD45 /* CRPermissionsViewController.swift */,
 			);
 			path = CRPermissions;
@@ -448,6 +453,7 @@
 				6A66DDF81BDEBDBD00E5DD45 /* CRPermissionsViewController.swift in Sources */,
 				6A2805DA1BDAD0DD00B42F0F /* ViewController.swift in Sources */,
 				6A2805D81BDAD0DD00B42F0F /* AppDelegate.swift in Sources */,
+				6AEA8E511BE034CA00562FAE /* CRPermissionsExtensions.swift in Sources */,
 				6A66DDF21BDEA5E000E5DD45 /* CRPermissions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -457,6 +463,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A66DDF91BDEBDBD00E5DD45 /* CRPermissionsViewController.swift in Sources */,
+				6AEA8E521BE034CA00562FAE /* CRPermissionsExtensions.swift in Sources */,
 				6A2805ED1BDAD0DD00B42F0F /* CRPermissionsTests.swift in Sources */,
 				6A66DDF31BDEA5E000E5DD45 /* CRPermissions.swift in Sources */,
 			);
@@ -467,6 +474,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A66DDFA1BDEBDBD00E5DD45 /* CRPermissionsViewController.swift in Sources */,
+				6AEA8E531BE034CA00562FAE /* CRPermissionsExtensions.swift in Sources */,
 				6A2805F81BDAD0DD00B42F0F /* CRPermissionsUITests.swift in Sources */,
 				6A66DDF41BDEA5E000E5DD45 /* CRPermissions.swift in Sources */,
 			);
