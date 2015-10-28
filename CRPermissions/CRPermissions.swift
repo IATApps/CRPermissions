@@ -22,14 +22,14 @@ typealias CRLocationPermissionCompletionBlock = (type: CRLocationType, hasPermis
 
 // MARK: - Structs
 
-enum CRPermissionType: Int {
-	case Camera
-	case Microphone
-	case Photos
-	case Contacts
-	case Events
-	case Reminders
-	case Location
+enum CRPermissionType: String {
+	case Camera = "Can We Access Your Camera"
+	case Microphone = "Can We Access Your Microphone"
+	case Photos = "Can We Access Your Photos"
+	case Contacts = "Can We Access Your Contacts"
+	case Events = "Can We Access Your Events"
+	case Reminders = "Can We Access Your Reminders"
+	case Location = "Can We Access Your Location"
 }
 
 enum CRPermissionResult: Int {
