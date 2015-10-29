@@ -8,7 +8,9 @@
 
 import UIKit
 
-class ViewController: UIViewController, CRPermissionsDelegate {
+import FontAwesomeKit
+
+class ViewController: UIViewController, CRPermissionsDelegate, CRPermissionsUIDelegate {
 	
 	var locationType = CRLocationType.Default
 	
@@ -51,11 +53,25 @@ class ViewController: UIViewController, CRPermissionsDelegate {
 	// MARK: - Functions
 	
 	func requestPermission(type: CRPermissionType) {
-		let permissionVC = CRPermissionsViewController()
-		permissionVC.delegate = self
-		permissionVC.view.tintColor = UIColor.appBlueColor()
-		permissionVC.iconLabel.textColor = UIColor.appRedColor()
-		presentPermissionsController(permissionVC, forType: type, locationType: locationType)
+		
+		switch CRPermissions.permissionGranted(forType: type, locationType: locationType) {
+			
+		case false:
+			let permissionVC = CRPermissionsViewController()
+			permissionVC.delegate = self
+			permissionVC.uiDelegate = self
+			
+			// Adjusts the Action Button Color
+			permissionVC.view.tintColor = UIColor.appBlueColor()
+			
+			// Adjusts the Icon Color
+			permissionVC.iconImageView.tintColor = UIColor.appRedColor()
+			
+			presentPermissionsController(permissionVC, forType: type, locationType: locationType)
+			
+		default:
+			showMessageAlert("Already Granted!", message: "Thanks, awesome user!", cancelButtonTitle: "Gotcha", tintColor: UIColor.appBlueColor())
+		}
 	}
 	
 	// MARK: - CRPermission Delegate Functions
@@ -66,7 +82,7 @@ class ViewController: UIViewController, CRPermissionsDelegate {
 	}
 	
 	func permissionsController(controller: CRPermissionsViewController, didDenyPermissionForType type: CRPermissionType, systemResult: CRPermissionResult) {
-		print("didDenyPermissionForType type: \(type), \(systemResult)")
+		print("didDenyPermissionForType type: \(type), \(systemResult) \n WARNING: Some permissions, like Microphone, don't work on the Simulator")
 	}
 	
 	func permissionsControllerWillRequestSystemPermission(controller: CRPermissionsViewController) {
@@ -76,6 +92,14 @@ class ViewController: UIViewController, CRPermissionsDelegate {
 	func permissionsControllerDidCancel(controller: CRPermissionsViewController) {
 		print("permissionsControllerDidCancel")
 		dismissViewControllerAnimated(true, completion: nil)
+	}
+	
+	func permissionsControllerRequestActionTitle(controller: CRPermissionsViewController) -> String {
+		return "Allow"
+	}
+	
+	func permissionsControllerRequestCancelTitle(controller: CRPermissionsViewController) -> String {
+		return "Not Now"
 	}
 	
 	
