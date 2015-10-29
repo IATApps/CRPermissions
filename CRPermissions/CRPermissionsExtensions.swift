@@ -277,6 +277,11 @@ extension UIView {
 
 extension UIViewController {
 	
+	func showMessageAlert(title: String, message: String?, cancelButtonTitle: String, tintColor: UIColor?) {
+		let alertController = UIAlertController(title: title, message: message, preferredStyle: .Alert, actions: [UIAlertAction.cancelAction(cancelButtonTitle)], tintColor: tintColor)
+		presentViewController(alertController, animated: true, completion: nil)
+	}
+	
 	func presentPermissionsController(controller: CRPermissionsViewController, forType type: CRPermissionType, locationType: CRLocationType = .Default, animated: Bool = true, completion: (() -> Void)? = nil) {
 		controller.permissionType = type
 		controller.locationType = locationType
@@ -286,5 +291,38 @@ extension UIViewController {
 		}
 		
 		presentViewController(controller, animated: animated, completion: completion)
+	}
+}
+
+// MARK: -
+
+extension UIAlertController {
+	
+	convenience init(title: String?, message: String?, preferredStyle: UIAlertControllerStyle, actions: [UIAlertAction], tintColor: UIColor?) {
+		self.init(title: title, message: message, preferredStyle: preferredStyle)
+		
+		for action in actions {
+			self.addAction(action)
+		}
+		
+		if let color = tintColor {
+			self.view.tintColor = color
+		}
+	}
+}
+
+// MARK: -
+
+extension UIAlertAction {
+	
+	class func dismissControllerAction(sender: UIViewController, title: String, style: UIAlertActionStyle) -> UIAlertAction {
+		return UIAlertAction(title: title, style: style) {
+			(alert: UIAlertAction) in
+			sender.dismissViewControllerAnimated(true, completion: nil)
+		}
+	}
+	
+	class func cancelAction(title: String) -> UIAlertAction {
+		return UIAlertAction(title: title, style: .Cancel, handler: nil)
 	}
 }
