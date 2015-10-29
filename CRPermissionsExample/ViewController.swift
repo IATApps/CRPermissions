@@ -85,7 +85,7 @@ class ViewController: UIViewController, CRPermissionsDelegate, CRPermissionsUIDe
 	}
 	
 	func permissionsController(controller: CRPermissionsViewController, didDenyPermissionForType type: CRPermissionType, systemResult: CRPermissionResult) {
-		print("didDenyPermissionForType type: \(type), \(systemResult) \n WARNING: Some permissions, like Microphone, don't work on the Simulator")
+		print("didDenyPermissionForType type: \(type), \(systemResult) \nWARNING: Some permissions, like Microphone, don't work on the Simulator")
 	}
 	
 	func permissionsControllerWillRequestSystemPermission(controller: CRPermissionsViewController) {
