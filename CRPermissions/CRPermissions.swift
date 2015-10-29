@@ -117,27 +117,28 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		}
 	}
 	
-	class func defaultTitle(forType type: CRPermissionType) -> String {
-		
-		var action = ""
-		
+	class func defaultTypeName(forType type: CRPermissionType) -> String {
 		switch type {
 		case .Camera:
-			action = "Camera"
+			return "Camera"
 		case .Microphone:
-			action = "Microphone"
+			return "Microphone"
 		case .Photos:
-			action = "Photos"
+			return "Photos"
 		case .Contacts:
-			action = "Contacts"
+			return "Contacts"
 		case .Events:
-			action = "Events"
+			return "Events"
 		case .Reminders:
-			action = "Reminders"
+			return "Reminders"
 		case .Location:
-			action = "Location"
+			return "Location"
 		}
+	}
+	
+	class func defaultTitle(forType type: CRPermissionType) -> String {
 		
+		let action = defaultTypeName(forType: type)
 		var title = type.rawValue
 		
 		switch authStatus(forType: type) {
@@ -160,25 +161,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 	
 	class func defaultMessage(forType type: CRPermissionType) -> String {
 		
-		var action = ""
-		
-		switch type {
-		case .Camera:
-			action = "Camera"
-		case .Microphone:
-			action = "Microphone"
-		case .Photos:
-			action = "Photos"
-		case .Contacts:
-			action = "Contacts"
-		case .Events:
-			action = "Events"
-		case .Reminders:
-			action = "Reminders"
-		case .Location:
-			action = "Location"
-		}
-		
+		let action = defaultTypeName(forType: type)
 		var message = "We need access to your \(action)"
 		
 		switch authStatus(forType: type) {
