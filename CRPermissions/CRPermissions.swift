@@ -97,7 +97,11 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		return false
 	}
 	
-	class func authStatus(forType type: CRPermissionType) -> CRPermissionAuthStatus {
+	class func permissionGranted(forType type: CRPermissionType, locationType: CRLocationType = .Default) -> Bool {
+		return authStatus(forType: type, locationType: locationType) == .Authorized
+	}
+	
+	class func authStatus(forType type: CRPermissionType, locationType: CRLocationType = .Default) -> CRPermissionAuthStatus {
 		
 		switch type {
 		case .Camera:
@@ -113,7 +117,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		case .Reminders:
 			return remindersAuthStatus()
 		case .Location:
-			return locationAuthStatus(.Default)
+			return locationAuthStatus(locationType)
 		}
 	}
 	
