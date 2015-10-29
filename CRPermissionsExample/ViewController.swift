@@ -50,9 +50,13 @@ class ViewController: UIViewController, CRPermissionsDelegate {
 	
 	// MARK: - CRPermission Delegate Functions
 	
-	func permissionsController(controller: CRPermissionsViewController, type: CRPermissionType, hasPermission: Bool, systemResult: CRPermissionResult) {
+	func permissionsController(controller: CRPermissionsViewController, didAllowPermissionForType type: CRPermissionType) {
 		dismissViewControllerAnimated(true, completion: nil)
-		print("type: \(type), hasPermission: \(hasPermission), systemResult: \(systemResult)")
+		print("Success type: \(type)")
+	}
+	
+	func permissionsController(controller: CRPermissionsViewController, didDenyPermissionForType type: CRPermissionType, systemResult: CRPermissionResult) {
+		print("didDenyPermissionForType type: \(type), \(systemResult)")
 	}
 	
 	func permissionsControllerWillRequestSystemPermission(controller: CRPermissionsViewController) {

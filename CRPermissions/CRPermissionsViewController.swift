@@ -16,7 +16,8 @@ import FontAwesomeKit
 
 protocol CRPermissionsDelegate {
 	
-	func permissionsController(controller: CRPermissionsViewController, type: CRPermissionType, hasPermission: Bool, systemResult: CRPermissionResult)
+	func permissionsController(controller: CRPermissionsViewController, didAllowPermissionForType type: CRPermissionType)
+	func permissionsController(controller: CRPermissionsViewController, didDenyPermissionForType type: CRPermissionType, systemResult: CRPermissionResult)
 	func permissionsControllerWillRequestSystemPermission(controller: CRPermissionsViewController)
 	func permissionsControllerDidCancel(controller: CRPermissionsViewController)
 }
@@ -34,6 +35,8 @@ class CRPermissionsViewController: UIViewController {
 	private let kLabelWidth = UIScreen.mainScreen().bounds.size.width - 40
 	private let kButtonSize = CGSizeMake(180, 44)
 	
+	private let buttonTargets = ["actionButtonPressed:", "cancelButtonPressed:"]
+	
 	// MARK: Variables
 	
 	var delegate: CRPermissionsDelegate?
@@ -41,26 +44,49 @@ class CRPermissionsViewController: UIViewController {
 	var locationType = CRLocationType.Default
 	var icon: FAKIcon?
 	
+	var message: String?
+	
 	var iconLabel = UILabel()
 	var titleLabel = UILabel()
 	var messageLabel = UILabel()
 	
 	var cancelButton = UIButton()
-	var allowButton = UIButton()
+	var actionButton = UIButton()
+	
+	// MARK: Private Variables
 	
 	
 	// MARK: - Functions
 	
-	func allowButtonPressed(sender: UIButton) {
+	func actionButtonPressed(sender: UIButton) {
 		
-		self.delegate?.permissionsControllerWillRequestSystemPermission(self)
-		
-		let permissions = CRPermissions.sharedPermissions()
-		permissions.locationType = locationType
-		
-		permissions.requestPermissions(forType: permissionType) {
-			(hasPermission: Bool, systemResult: CRPermissionResult, systemStatus: CRPermissionAuthStatus) in
-			self.delegate?.permissionsController(self, type: self.permissionType, hasPermission: hasPermission, systemResult: systemResult)
+		switch CRPermissions.authStatus(forType: permissionType) {
+			
+		case .Authorized:
+			delegate?.permissionsController(self, didAllowPermissionForType: self.permissionType)
+			
+		case .Restricted, .Denied:
+			CRPermissions.openAppSettings()
+			
+		default:
+			delegate?.permissionsControllerWillRequestSystemPermission(self)
+			
+			let permissions = CRPermissions.sharedPermissions()
+			permissions.locationType = locationType
+			
+			permissions.requestPermissions(forType: permissionType) {
+				(hasPermission: Bool, systemResult: CRPermissionResult, systemStatus: CRPermissionAuthStatus) in
+				
+				switch hasPermission {
+					
+				case true:
+					self.delegate?.permissionsController(self, didAllowPermissionForType: self.permissionType)
+					
+				default:
+					self.delegate?.permissionsController(self, didDenyPermissionForType: self.permissionType, systemResult: systemResult)
+					self.adjustView()
+				}
+			}
 		}
 	}
 	
@@ -68,75 +94,41 @@ class CRPermissionsViewController: UIViewController {
 		self.delegate?.permissionsControllerDidCancel(self)
 	}
 	
-	// MARK: - Load Functions
-	
-	convenience init(type: CRPermissionType, tintColor: UIColor?, icon: FAKIcon? = nil, locationType: CRLocationType = .Default) {
-		self.init()
-		self.permissionType = type
-		self.title = type.rawValue
-		self.view.tintColor = tintColor
-		self.icon = icon
-		self.locationType = locationType
+	func adjustView() {
 		
-		if self.icon == nil {
-			switch type {
-			case .Camera:
-				self.icon = FAKIonIcons.iosCameraIconWithSize(100)
-			case .Microphone:
-				self.icon = FAKIonIcons.iosMicIconWithSize(100)
-			case .Photos:
-				self.icon = FAKIonIcons.iosPhotosIconWithSize(100)
-			case .Contacts:
-				self.icon = FAKIonIcons.iosPersonIconWithSize(100)
-			case .Events:
-				self.icon = FAKIonIcons.iosCalendarIconWithSize(100)
-			case .Reminders:
-				self.icon = FAKIonIcons.iosCircleFilledIconWithSize(100)
-			case .Location:
-				self.icon = FAKIonIcons.iosLocationIconWithSize(100)
-			}
+		if message == nil {
+			message = CRPermissions.defaultMessage(forType: permissionType)
 		}
-	}
-
-	override func viewWillAppear(animated: Bool) {
-		super.viewWillAppear(animated)
 		
-		view.backgroundColor = UIColor.whiteColor()
+		if self.title == nil {
+			self.title = CRPermissions.defaultTitle(forType: permissionType)
+		}
 		
-		let labelFonts = [icon!.iconFont(), UIFont.systemFontOfSize(UIFont.systemFontSize() + 4), UIFont.systemFontOfSize(UIFont.systemFontSize() - 2)]
-		let labelColors = [UIColor.appBlueColor(), UIColor.appDarkGreyColor(), UIColor.appLightGrayColor()]
-		let labelText: [String?] = [icon?.attributedString().string, permissionType.rawValue, "This is our message reason."]
+		var buttonText: [String?] = ["Allow", "Not Now"]
+		
+		switch CRPermissions.authStatus(forType: permissionType) {
+			
+		case .Denied, .Restricted:
+			self.title = CRPermissions.defaultTitle(forType: permissionType)
+			buttonText = ["Open Settings", "Not Now"]
+			
+		case .Authorized:
+			buttonText = ["Awesome", nil]
+			
+		default:
+			buttonText = ["Allow", "Not Now"]
+		}
+		
+		iconLabel.font = icon?.iconFont()
+		
+		let labelText: [String?] = [icon?.attributedString().string, self.title, message]
 		
 		for (index, label) in [iconLabel, titleLabel, messageLabel].enumerate() {
-			
-			label.numberOfLines = 0
-			label.font = labelFonts[index]
-			label.textColor = labelColors[index]
-			label.textAlignment = .Center
-			label.userInteractionEnabled = false
 			label.text = labelText[index]
-			
-			view.addSubview(label)
 		}
 		
-		
-		let buttonFonts = [UIFont.systemFontOfSize(UIFont.systemFontSize()), UIFont.systemFontOfSize(UIFont.systemFontSize() - 2)]
-		let buttonTextColors = [UIColor.whiteColor(), UIColor.appDarkBlueColor()]
-		let buttonBackgroundColors = [UIColor.appBlueColor(), UIColor.clearColor()]
-		let buttonText: [String?] = ["Allow", "Not Now"]
-		let buttonTargets = ["allowButtonPressed:", "cancelButtonPressed:"]
-		
-		for (index, button) in [allowButton, cancelButton].enumerate() {
-			
-			button.titleLabel?.font = buttonFonts[index]
-			button.setTitleColor(buttonTextColors[index], forState: .Normal)
+		for (index, button) in [actionButton, cancelButton].enumerate() {
 			button.setTitle(buttonText[index], forState: .Normal)
-			button.setBackgroundColor(buttonBackgroundColors[index], forState: .Normal)
-			button.adjustViewLayer(2.0)
-			
-			button.addTarget(self, action: Selector(buttonTargets[index]), forControlEvents: .TouchUpInside)
-			
-			view.addSubview(button)
 		}
 		
 		let messageHeight = messageLabel.text == nil ? 0 : messageLabel.text!.sizeWithFont(messageLabel.font, maxWidth: kLabelWidth).height
@@ -148,6 +140,86 @@ class CRPermissionsViewController: UIViewController {
 		iconLabel.frame = CGRectMake(kLabelX, titleLabel.frame.origin.y - (iconHeight + 20), kLabelWidth, iconHeight)
 		
 		cancelButton.frame = CGRectMake(kScreenWidth/2 - kButtonSize.width/2, kScreenHeight - (kButtonSize.height + 30), kButtonSize.width, kButtonSize.height)
-		allowButton.frame = CGRectMake(kScreenWidth/2 - kButtonSize.width/2, cancelButton.frame.origin.y - (kButtonSize.height + 8), kButtonSize.width, kButtonSize.height)
+		actionButton.frame = CGRectMake(kScreenWidth/2 - kButtonSize.width/2, cancelButton.frame.origin.y - (kButtonSize.height + 8), kButtonSize.width, kButtonSize.height)
+	}
+	
+	func defaultIcon() -> FAKIcon? {
+		
+		switch permissionType {
+		case .Camera:
+			return FAKIonIcons.iosCameraIconWithSize(100)
+		case .Microphone:
+			return FAKIonIcons.iosMicIconWithSize(100)
+		case .Photos:
+			return FAKIonIcons.iosPhotosIconWithSize(100)
+		case .Contacts:
+			return FAKIonIcons.iosPersonIconWithSize(100)
+		case .Events:
+			return FAKIonIcons.iosCalendarIconWithSize(100)
+		case .Reminders:
+			return FAKIonIcons.iosCircleFilledIconWithSize(100)
+		case .Location:
+			return FAKIonIcons.iosLocationIconWithSize(100)
+		}
+	}
+	
+	// MARK: - Load Functions
+	
+	convenience init(type: CRPermissionType, tintColor: UIColor?, icon: FAKIcon? = nil, locationType: CRLocationType = .Default) {
+		self.init()
+		
+		self.restorationClass = CRPermissionsViewController.self
+		
+		self.restorationIdentifier = "CRPermissionViewControllerRestoreID"
+		self.permissionType = type
+		self.title = type.rawValue
+		self.icon = icon == nil ? self.defaultIcon() : icon
+		self.locationType = locationType
+		
+		self.view.tintColor = tintColor
+		
+		let labelFonts: [UIFont?] = [nil, UIFont.systemFontOfSize(UIFont.systemFontSize() + 4), UIFont.systemFontOfSize(UIFont.systemFontSize() - 2)]
+		let labelColors = [UIColor.appBlueColor(), UIColor.appDarkGreyColor(), UIColor.appLightGrayColor()]
+		
+		for (index, label) in [iconLabel, titleLabel, messageLabel].enumerate() {
+			
+			label.numberOfLines = 0
+			label.font = labelFonts[index]
+			label.textColor = labelColors[index]
+			label.textAlignment = .Center
+			label.userInteractionEnabled = false
+			
+			view.addSubview(label)
+		}
+		
+		let buttonFonts = [UIFont.systemFontOfSize(UIFont.systemFontSize()), UIFont.systemFontOfSize(UIFont.systemFontSize() - 2)]
+		let buttonTextColors = [UIColor.whiteColor(), UIColor.appDarkBlueColor()]
+		let buttonBackgroundColors = [UIColor.appBlueColor(), UIColor.clearColor()]
+		
+		for (index, button) in [actionButton, cancelButton].enumerate() {
+			
+			button.titleLabel?.font = buttonFonts[index]
+			button.setTitleColor(buttonTextColors[index], forState: .Normal)
+			button.setBackgroundColor(buttonBackgroundColors[index], forState: .Normal)
+			button.adjustViewLayer(2.0)
+			
+			button.addTarget(self, action: Selector(buttonTargets[index]), forControlEvents: .TouchUpInside)
+			
+			view.addSubview(button)
+		}
+	}
+
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
+		
+		view.backgroundColor = UIColor.whiteColor()
+		
+		adjustView()
+	}
+	
+	override func applicationFinishedRestoringState() {
+		super.applicationFinishedRestoringState()
+		
+		print("Called \(self)")
 	}
 }
