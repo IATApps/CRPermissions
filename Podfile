@@ -8,7 +8,6 @@ use_frameworks!
 
 
 def all_pods
-	pod 'AFNetworking'
 	#pod "CRPermissions", :path => "../"
 end
 

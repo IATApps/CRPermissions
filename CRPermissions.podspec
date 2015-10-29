@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "CRPermissions"
-  s.version          = "0.5"
+  s.version          = "0.9"
   s.summary          = "UIViewController with delegate methods that give an aesthetically pleasing way to request system permissions from your users."
 
 # This description is used to generate tags and improve search results.
@@ -36,5 +36,5 @@ Pod::Spec.new do |s|
     'CRPermissions' => ['CRPermissions/Assets/*.png']
   }
   
-  # s.dependency 'AFNetworking', '~> 2.3'
+  # s.dependency 'FontAwesomeKit'
 end
