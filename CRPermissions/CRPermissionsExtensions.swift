@@ -17,12 +17,12 @@ extension String {
 		return self.characters.count
 	}
 	
-	/**
-	Substring of String which accepts `Int` as the index
-	
-	- parameter to: The index to substring to
-	- returns: Trimmed String
-	*/
+/**
+Substring of String which accepts `Int` as the index
+
+- parameter to: The index to substring to
+- returns: Trimmed String
+*/
 	func substringToIndex(to: Int) -> String {
 		
 		switch self.length {
@@ -40,12 +40,12 @@ extension String {
 		}
 	}
 	
-	/**
-	Substring of String which accepts `Int` as the index
-	
-	- parameter to: The index to substring to
-	- returns: Trimmed String
-	*/
+/**
+Substring of String which accepts `Int` as the index
+
+- parameter to: The index to substring to
+- returns: Trimmed String
+*/
 	func substringFromIndex(from: Int) -> String {
 		
 		switch self.length {
@@ -61,6 +61,24 @@ extension String {
 			let index: String.Index = self.startIndex.advancedBy(from)
 			return self.substringFromIndex(index)
 		}
+	}
+	
+/**
+Sizes String with Font and max width to give the proper CGSize
+
+- parameter font: `UIFont` to use for sizing
+- parameter maxWidth: Max width for sizing
+- returns: Size for Displaying String
+*/
+	func sizeWithFont(font: UIFont?, maxWidth: CGFloat) -> CGSize {
+		
+		var size = CGSizeZero
+		
+		if let font = font {
+			size = (self as NSString).boundingRectWithSize(CGSizeMake(maxWidth, CGFloat.max), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: [NSFontAttributeName: font], context: nil).size
+		}
+		
+		return size
 	}
 }
 
@@ -90,10 +108,25 @@ extension CGFloat {
 
 // MARK: -
 
+extension UIButton {
+	
+	func setBackgroundColor(color: UIColor, forState state: UIControlState) {
+		self.setBackgroundImage(UIImage(color: color), forState: state)
+		self.backgroundColor = nil
+	}
+}
+
+// MARK: -
+
 extension UIColor {
 	
 	class func grayScaleColor(grayScale: CGFloat, alpha: CGFloat) -> UIColor {
 		return UIColor(redValue: grayScale, greenValue: grayScale, blueValue: grayScale, alpha: alpha)
+	}
+	
+	/// Blue Color: #39AFE5
+	class func appBlueColor() -> UIColor {
+		return UIColor(hexCode: "39AFE5", alpha: 1.0)
 	}
 	
 	/// Dark Blue Color: #193643
@@ -175,5 +208,62 @@ extension UIColor {
 		let blue = blueValue.adjust(min: 0, max: 255)/255.0
 		
 		self.init(red: red, green: green, blue: blue, alpha: alpha)
+	}
+}
+
+// MARK: -
+
+extension UIImage {
+	
+	convenience init?(color: UIColor) {
+		
+		let rect = CGRectMake(0.0, 0.0, 1.0, 1.0)
+		UIGraphicsBeginImageContext(rect.size)
+		let context = UIGraphicsGetCurrentContext()
+		
+		CGContextSetFillColorWithColor(context, color.CGColor)
+		CGContextFillRect(context, rect)
+		
+		let image = UIGraphicsGetImageFromCurrentImageContext()
+		UIGraphicsEndImageContext()
+		
+		if let cgImage = image.CGImage {
+			self.init(CGImage: cgImage)
+		}
+			
+		else {
+			self.init()
+		}
+	}
+}
+
+// MARK: -
+
+extension UIView {
+	
+	func adjustViewLayer(radius: CGFloat) {
+		adjustViewLayer(radius, borderColor: nil, borderWidth: nil, addShadow: false)
+	}
+	
+	func adjustViewLayer(radius: CGFloat, borderColor: UIColor?, borderWidth: CGFloat?, addShadow: Bool) {
+		
+		layer.borderColor = borderColor?.CGColor
+		
+		if let bWidth = borderWidth {
+			layer.borderWidth = bWidth
+		}
+		
+		contentMode = .ScaleAspectFill
+		layer.cornerRadius = radius
+		layer.masksToBounds = true
+		clipsToBounds = true
+		
+		if addShadow && superview != nil && CGSizeEqualToSize(superview!.frame.size, frame.size) {
+			superview?.layer.shadowColor = UIColor.blackColor().CGColor
+			superview?.layer.shadowOffset = CGSizeMake(1.3, 1.3)
+			superview?.layer.shadowOpacity = 0.75
+			superview?.layer.shadowRadius = 2.0
+			superview?.layer.shadowPath = UIBezierPath(roundedRect: superview!.bounds, cornerRadius: 100.0).CGPath
+		}
 	}
 }

@@ -18,7 +18,6 @@ import EventKit
 // MARK: Blocks
 
 typealias CRPermissionCompletionBlock = (hasPermission: Bool, systemResult: CRPermissionResult, systemStatus: CRPermissionAuthStatus) -> Void
-typealias CRLocationPermissionCompletionBlock = (type: CRLocationType, hasPermission: Bool, systemResult: CRPermissionResult, systemStatus: CRPermissionAuthStatus) -> Void
 
 // MARK: - Structs
 
@@ -72,8 +71,10 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 	
 	// MARK: - Variables
 	
-	private var locationCompletionBlock: CRLocationPermissionCompletionBlock? = nil
-	private var locationType = CRLocationType.Default
+	var locationType = CRLocationType.Default
+	
+	private var locationManager: CLLocationManager?
+	private var locationCompletionBlock: CRPermissionCompletionBlock? = nil
 	
 	required override init() {
 		super.init()
@@ -240,6 +241,26 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 	
 	// MARK: - Instance Functions
 	
+	func requestPermissions(forType type: CRPermissionType, completion: CRPermissionCompletionBlock?) {
+		
+		switch type {
+		case .Camera:
+			requestCameraPermissions(completion)
+		case .Microphone:
+			requestMicrophonePermissions(completion)
+		case .Photos:
+			requestPhotosPermissions(completion)
+		case .Contacts:
+			requestContactsPermissions(completion)
+		case .Events:
+			requestEventsPermissions(completion)
+		case .Reminders:
+			requestRemindersPermissions(completion)
+		case .Location:
+			requestLocationPermissions(completion)
+		}
+	}
+	
 	func requestCameraPermissions(completion: CRPermissionCompletionBlock?) {
 		requestPermissions(forMediaType: AVMediaTypeVideo, completion: completion)
 	}
@@ -317,30 +338,31 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		requestPermissions(forEventType: .Reminder, completion: completion)
 	}
 	
-	func requestLocationPermissions(locationType: CRLocationType, completion: CRLocationPermissionCompletionBlock?) {
+	func requestLocationPermissions(completion: CRPermissionCompletionBlock?) {
+		
+		print("requestLocationPermissions")
 		
 		locationCompletionBlock = completion
 		
 		let type = CRPermissionType.Location
 		let preStatus = CRPermissions.authStatus(forType: type)
-		self.locationType = locationType
 		
 		switch preStatus {
 			
 		case .NotDetermined:
 			
-			let locationManager = CLLocationManager()
-			locationManager.delegate = self
+			locationManager = CLLocationManager()
+			locationManager?.delegate = self
 			
 			switch locationType {
 			case .Always:
-				locationManager.requestAlwaysAuthorization()
+				locationManager?.requestAlwaysAuthorization()
 			default:
-				locationManager.requestWhenInUseAuthorization()
+				locationManager?.requestWhenInUseAuthorization()
 			}
 			
 		default:
-			locationCompletionBlock?(type: locationType, hasPermission: preStatus == .Authorized, systemResult: .NoActionTaken, systemStatus: preStatus)
+			locationCompletionBlock?(hasPermission: preStatus == .Authorized, systemResult: .NoActionTaken, systemStatus: preStatus)
 		}
 	}
 	
@@ -395,10 +417,36 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 	
 	func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
 		
-		let status = CRPermissions.locationAuthStatus(locationType)
-		let systemResult = CRPermissions.permissionResult(forStatus: status)
-		self.locationCompletionBlock?(type: self.locationType, hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+		print("manager: \(manager), status: \(status)")
 		
-		manager.stopUpdatingLocation()
+		if status != .NotDetermined {
+			
+			// Delay is for aesthetic purposes. Without it, the block is called before the System UIAlertController has completed the dismiss animation
+			
+			let time = dispatch_time(DISPATCH_TIME_NOW, Int64(0.3 * Double(NSEC_PER_SEC)))
+			dispatch_after(time, dispatch_get_main_queue()) {
+				
+				let status = CRPermissions.locationAuthStatus(self.locationType)
+				let systemResult = CRPermissions.permissionResult(forStatus: status)
+				self.locationCompletionBlock?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+				
+				self.locationManager?.stopUpdatingLocation()
+			}
+		}
+	}
+	
+	func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+		
+		// Delay is for aesthetic purposes. Without it, the block is called before the System UIAlertController has completed the dismiss animation
+		
+		let time = dispatch_time(DISPATCH_TIME_NOW, Int64(0.3 * Double(NSEC_PER_SEC)))
+		dispatch_after(time, dispatch_get_main_queue()) {
+			
+			let status = CRPermissions.locationAuthStatus(self.locationType)
+			let systemResult = CRPermissions.permissionResult(forStatus: status)
+			self.locationCompletionBlock?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+			
+			self.locationManager?.stopUpdatingLocation()
+		}
 	}
 }

@@ -8,17 +8,76 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, CRPermissionsDelegate {
+	
+	var locationType = CRLocationType.Default
+	
+	// MARK: - IBActions
+	
+	@IBAction func cameraButtonPressed(sender: UIButton) {
+		requestPermission(.Camera)
+	}
+	
+	@IBAction func microphoneButtonPressed(sender: UIButton) {
+		requestPermission(.Microphone)
+	}
+	
+	@IBAction func photosButtonPressed(sender: UIButton) {
+		requestPermission(.Photos)
+	}
+	
+	@IBAction func contactsButtonPressed(sender: UIButton) {
+		requestPermission(.Contacts)
+	}
+	
+	@IBAction func eventsButtonPressed(sender: UIButton) {
+		requestPermission(.Events)
+	}
+	
+	@IBAction func remindersButtonPressed(sender: UIButton) {
+		requestPermission(.Reminders)
+	}
+	
+	@IBAction func locationAlwaysButtonPressed(sender: UIButton) {
+		locationType = .Always
+		requestPermission(.Location)
+	}
+	
+	@IBAction func locationWhenInUseButtonPressed(sender: UIButton) {
+		locationType = .WhenInUse
+		requestPermission(.Location)
+	}
+	
+	// MARK: - CRPermission Delegate Functions
+	
+	func permissionsController(controller: CRPermissionsViewController, type: CRPermissionType, hasPermission: Bool, systemResult: CRPermissionResult) {
+		dismissViewControllerAnimated(true, completion: nil)
+		print("type: \(type), hasPermission: \(hasPermission), systemResult: \(systemResult)")
+	}
+	
+	func permissionsControllerWillRequestSystemPermission(controller: CRPermissionsViewController) {
+		print("permissionsControllerWillRequestSystemPermission")
+	}
+	
+	func permissionsControllerDidCancel(controller: CRPermissionsViewController) {
+		print("permissionsControllerDidCancel")
+		dismissViewControllerAnimated(true, completion: nil)
+	}
+	
+	
+	// MARK: - Functions
+	
+	func requestPermission(type: CRPermissionType) {
+		let permissionVC = CRPermissionsViewController(type: type, tintColor: UIColor.appBlueColor(), locationType: locationType)
+		permissionVC.delegate = self
+		presentViewController(permissionVC, animated: true, completion: nil)
+	}
+	
+	
+	// MARK: - Loads
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		// Do any additional setup after loading the view, typically from a nib.
 	}
-
-	override func didReceiveMemoryWarning() {
-		super.didReceiveMemoryWarning()
-		// Dispose of any resources that can be recreated.
-	}
-
-
 }

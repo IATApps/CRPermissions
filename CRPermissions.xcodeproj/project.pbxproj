@@ -22,6 +22,18 @@
 		6A66DDF81BDEBDBD00E5DD45 /* CRPermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A66DDF71BDEBDBD00E5DD45 /* CRPermissionsViewController.swift */; };
 		6A66DDF91BDEBDBD00E5DD45 /* CRPermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A66DDF71BDEBDBD00E5DD45 /* CRPermissionsViewController.swift */; };
 		6A66DDFA1BDEBDBD00E5DD45 /* CRPermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A66DDF71BDEBDBD00E5DD45 /* CRPermissionsViewController.swift */; };
+		6AB6A3541BE188D500FCEF1E /* FontAwesome.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6AB6A3501BE188D500FCEF1E /* FontAwesome.otf */; };
+		6AB6A3551BE188D500FCEF1E /* FontAwesome.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6AB6A3501BE188D500FCEF1E /* FontAwesome.otf */; };
+		6AB6A3561BE188D500FCEF1E /* FontAwesome.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6AB6A3501BE188D500FCEF1E /* FontAwesome.otf */; };
+		6AB6A3571BE188D500FCEF1E /* foundation-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AB6A3511BE188D500FCEF1E /* foundation-icons.ttf */; };
+		6AB6A3581BE188D500FCEF1E /* foundation-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AB6A3511BE188D500FCEF1E /* foundation-icons.ttf */; };
+		6AB6A3591BE188D500FCEF1E /* foundation-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AB6A3511BE188D500FCEF1E /* foundation-icons.ttf */; };
+		6AB6A35A1BE188D500FCEF1E /* ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AB6A3521BE188D500FCEF1E /* ionicons.ttf */; };
+		6AB6A35B1BE188D500FCEF1E /* ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AB6A3521BE188D500FCEF1E /* ionicons.ttf */; };
+		6AB6A35C1BE188D500FCEF1E /* ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AB6A3521BE188D500FCEF1E /* ionicons.ttf */; };
+		6AB6A35D1BE188D500FCEF1E /* zocial-regular-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AB6A3531BE188D500FCEF1E /* zocial-regular-webfont.ttf */; };
+		6AB6A35E1BE188D500FCEF1E /* zocial-regular-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AB6A3531BE188D500FCEF1E /* zocial-regular-webfont.ttf */; };
+		6AB6A35F1BE188D500FCEF1E /* zocial-regular-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AB6A3531BE188D500FCEF1E /* zocial-regular-webfont.ttf */; };
 		6AEA8E511BE034CA00562FAE /* CRPermissionsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEA8E501BE034CA00562FAE /* CRPermissionsExtensions.swift */; };
 		6AEA8E521BE034CA00562FAE /* CRPermissionsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEA8E501BE034CA00562FAE /* CRPermissionsExtensions.swift */; };
 		6AEA8E531BE034CA00562FAE /* CRPermissionsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEA8E501BE034CA00562FAE /* CRPermissionsExtensions.swift */; };
@@ -64,6 +76,10 @@
 		6A2805F91BDAD0DD00B42F0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6A66DDF11BDEA5E000E5DD45 /* CRPermissions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CRPermissions.swift; sourceTree = "<group>"; };
 		6A66DDF71BDEBDBD00E5DD45 /* CRPermissionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CRPermissionsViewController.swift; sourceTree = "<group>"; };
+		6AB6A3501BE188D500FCEF1E /* FontAwesome.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome.otf; path = Pods/FontAwesomeKit/FontAwesomeKit/FontAwesome.otf; sourceTree = SOURCE_ROOT; };
+		6AB6A3511BE188D500FCEF1E /* foundation-icons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "foundation-icons.ttf"; path = "Pods/FontAwesomeKit/FontAwesomeKit/foundation-icons.ttf"; sourceTree = SOURCE_ROOT; };
+		6AB6A3521BE188D500FCEF1E /* ionicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = ionicons.ttf; path = Pods/FontAwesomeKit/FontAwesomeKit/ionicons.ttf; sourceTree = SOURCE_ROOT; };
+		6AB6A3531BE188D500FCEF1E /* zocial-regular-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "zocial-regular-webfont.ttf"; path = "Pods/FontAwesomeKit/FontAwesomeKit/zocial-regular-webfont.ttf"; sourceTree = SOURCE_ROOT; };
 		6AEA8E501BE034CA00562FAE /* CRPermissionsExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CRPermissionsExtensions.swift; sourceTree = "<group>"; };
 		9777BE8C0F6AAABB6D7D588D /* Pods-CRPermissionsUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CRPermissionsUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-CRPermissionsUITests/Pods-CRPermissionsUITests.release.xcconfig"; sourceTree = "<group>"; };
 		B1B8AD590866DC9343BACA60 /* Pods-CRPermissionsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CRPermissionsTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-CRPermissionsTests/Pods-CRPermissionsTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -150,6 +166,7 @@
 		6A2805D61BDAD0DD00B42F0F /* CRPermissionsExample */ = {
 			isa = PBXGroup;
 			children = (
+				6AB6A3601BE188DC00FCEF1E /* Font References */,
 				6A2805D71BDAD0DD00B42F0F /* AppDelegate.swift */,
 				6A2805D91BDAD0DD00B42F0F /* ViewController.swift */,
 				6A2805DB1BDAD0DD00B42F0F /* Main.storyboard */,
@@ -186,6 +203,17 @@
 				6A66DDF71BDEBDBD00E5DD45 /* CRPermissionsViewController.swift */,
 			);
 			path = CRPermissions;
+			sourceTree = "<group>";
+		};
+		6AB6A3601BE188DC00FCEF1E /* Font References */ = {
+			isa = PBXGroup;
+			children = (
+				6AB6A3501BE188D500FCEF1E /* FontAwesome.otf */,
+				6AB6A3511BE188D500FCEF1E /* foundation-icons.ttf */,
+				6AB6A3521BE188D500FCEF1E /* ionicons.ttf */,
+				6AB6A3531BE188D500FCEF1E /* zocial-regular-webfont.ttf */,
+			);
+			name = "Font References";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -300,9 +328,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6AB6A35A1BE188D500FCEF1E /* ionicons.ttf in Resources */,
 				6A2805E21BDAD0DD00B42F0F /* LaunchScreen.storyboard in Resources */,
 				6A2805DF1BDAD0DD00B42F0F /* Assets.xcassets in Resources */,
+				6AB6A35D1BE188D500FCEF1E /* zocial-regular-webfont.ttf in Resources */,
+				6AB6A3541BE188D500FCEF1E /* FontAwesome.otf in Resources */,
 				6A2805DD1BDAD0DD00B42F0F /* Main.storyboard in Resources */,
+				6AB6A3571BE188D500FCEF1E /* foundation-icons.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,6 +342,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6AB6A35B1BE188D500FCEF1E /* ionicons.ttf in Resources */,
+				6AB6A35E1BE188D500FCEF1E /* zocial-regular-webfont.ttf in Resources */,
+				6AB6A3581BE188D500FCEF1E /* foundation-icons.ttf in Resources */,
+				6AB6A3551BE188D500FCEF1E /* FontAwesome.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,6 +353,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6AB6A35C1BE188D500FCEF1E /* ionicons.ttf in Resources */,
+				6AB6A35F1BE188D500FCEF1E /* zocial-regular-webfont.ttf in Resources */,
+				6AB6A3591BE188D500FCEF1E /* foundation-icons.ttf in Resources */,
+				6AB6A3561BE188D500FCEF1E /* FontAwesome.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
