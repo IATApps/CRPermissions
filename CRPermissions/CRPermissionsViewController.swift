@@ -47,7 +47,7 @@ class CRPermissionsViewController: UIViewController {
 	var delegate: CRPermissionsDelegate?
 	var uiDelegate: CRPermissionsUIDelegate?
 	var permissionType = CRPermissionType.Camera
-	var locationType = CRLocationType.Default
+	var locationType = CRLocationType.WhenInUse
 	
 	var iconImageView = UIImageView()
 	var titleLabel = UILabel()
@@ -106,19 +106,19 @@ class CRPermissionsViewController: UIViewController {
 	
 	func actionButtonPressed(sender: UIButton) {
 		
-		switch CRPermissions.authStatus(forType: permissionType) {
+		let permissions = CRPermissions.sharedPermissions()
+		permissions.locationType = locationType
+		
+		switch permissions.authStatus(forType: permissionType) {
 			
 		case .Authorized:
 			delegate?.permissionsController(self, didAllowPermissionForType: self.permissionType)
 			
 		case .Restricted, .Denied:
-			CRPermissions.openAppSettings()
+			permissions.openAppSettings()
 			
 		default:
 			delegate?.permissionsControllerWillRequestSystemPermission(self)
-			
-			let permissions = CRPermissions.sharedPermissions()
-			permissions.locationType = locationType
 			
 			permissions.requestPermissions(forType: permissionType) {
 				(hasPermission: Bool, systemResult: CRPermissionResult, systemStatus: CRPermissionAuthStatus) in
@@ -145,11 +145,14 @@ class CRPermissionsViewController: UIViewController {
 		var actionTitle = uiDelegate?.permissionsControllerRequestActionTitle?(self)
 		var cancelTitle = uiDelegate?.permissionsControllerRequestCancelTitle?(self)
 		
-		switch CRPermissions.authStatus(forType: permissionType) {
+		let permissions = CRPermissions.sharedPermissions()
+		permissions.locationType = locationType
+		
+		switch permissions.authStatus(forType: permissionType) {
 			
 		case .Denied, .Restricted:
-			titleLabel.text = CRPermissions.defaultTitle(forType: permissionType)
-			messageLabel.text = CRPermissions.defaultMessage(forType: permissionType)
+			titleLabel.text = permissions.defaultTitle(forType: permissionType)
+			messageLabel.text = permissions.defaultMessage(forType: permissionType)
 			actionTitle = "Open Settings"
 			
 		case .Authorized:
@@ -177,11 +180,11 @@ class CRPermissionsViewController: UIViewController {
 		
 		
 		if messageLabel.text == nil {
-			messageLabel.text = CRPermissions.defaultMessage(forType: permissionType)
+			messageLabel.text = permissions.defaultMessage(forType: permissionType)
 		}
 		
 		if titleLabel.text == nil {
-			titleLabel.text = CRPermissions.defaultTitle(forType: permissionType)
+			titleLabel.text = permissions.defaultTitle(forType: permissionType)
 		}
 		
 		let messageHeight = messageLabel.text == nil ? 0 : messageLabel.text!.sizeWithFont(messageLabel.font, maxWidth: kLabelWidth).height

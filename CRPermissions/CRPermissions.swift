@@ -54,8 +54,6 @@ enum CRPermissionResult: Int {
 }
 
 enum CRLocationType: Int {
-	/// Defaults to WhenInUse
-	case Default
 	/// Always have Access, even in background.
 	case Always
 	/// Access when app is in foreground.
@@ -71,7 +69,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 	
 	// MARK: - Variables
 	
-	var locationType = CRLocationType.Default
+	var locationType = CRLocationType.WhenInUse
 	
 	private var locationManager: CLLocationManager?
 	private var locationCompletionBlock: CRPermissionCompletionBlock? = nil
@@ -90,18 +88,18 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		return sharedInstance!
 	}
 	
-	class func openAppSettings() -> Bool {
+	func openAppSettings() -> Bool {
 		if let settingsURL = NSURL(string: UIApplicationOpenSettingsURLString) {
 			return UIApplication.sharedApplication().openURL(settingsURL)
 		}
 		return false
 	}
 	
-	class func permissionGranted(forType type: CRPermissionType, locationType: CRLocationType = .Default) -> Bool {
-		return authStatus(forType: type, locationType: locationType) == .Authorized
+	func permissionGranted(forType type: CRPermissionType) -> Bool {
+		return authStatus(forType: type) == .Authorized
 	}
 	
-	class func authStatus(forType type: CRPermissionType, locationType: CRLocationType = .Default) -> CRPermissionAuthStatus {
+	func authStatus(forType type: CRPermissionType) -> CRPermissionAuthStatus {
 		
 		switch type {
 		case .Camera:
@@ -117,11 +115,11 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		case .Reminders:
 			return remindersAuthStatus()
 		case .Location:
-			return locationAuthStatus(locationType)
+			return locationAuthStatus()
 		}
 	}
 	
-	class func defaultTypeName(forType type: CRPermissionType) -> String {
+	func defaultTypeName(forType type: CRPermissionType) -> String {
 		switch type {
 		case .Camera:
 			return "Camera"
@@ -140,7 +138,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		}
 	}
 	
-	class func defaultTitle(forType type: CRPermissionType) -> String {
+	func defaultTitle(forType type: CRPermissionType) -> String {
 		
 		let action = defaultTypeName(forType: type)
 		var title = type.rawValue
@@ -148,7 +146,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		switch authStatus(forType: type) {
 			
 		case .Authorized:
-			title = "We've Can Access Your \(action)"
+			title = "You've Allowed Access Your \(action)"
 			
 		case .Denied:
 			title = "You've Denied Access Your \(action)"
@@ -163,7 +161,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		return title
 	}
 	
-	class func defaultMessage(forType type: CRPermissionType) -> String {
+	func defaultMessage(forType type: CRPermissionType) -> String {
 		
 		let action = defaultTypeName(forType: type)
 		var message = "We need access to your \(action)"
@@ -186,7 +184,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		return message
 	}
 	
-	private class func systemResult(forStatus status: CRPermissionAuthStatus) -> CRPermissionResult {
+	private func systemResult(forStatus status: CRPermissionAuthStatus) -> CRPermissionResult {
 		
 		switch status {
 			
@@ -201,15 +199,15 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		}
 	}
 	
-	class func cameraAuthStatus() -> CRPermissionAuthStatus {
+	func cameraAuthStatus() -> CRPermissionAuthStatus {
 		return authStatus(forMediaType: AVMediaTypeVideo)
 	}
 	
-	class func microphoneAuthStatus() -> CRPermissionAuthStatus {
+	func microphoneAuthStatus() -> CRPermissionAuthStatus {
 		return authStatus(forMediaType: AVMediaTypeAudio)
 	}
 	
-	class func photosAuthStatus() -> CRPermissionAuthStatus {
+	func photosAuthStatus() -> CRPermissionAuthStatus {
 		
 		switch PHPhotoLibrary.authorizationStatus() {
 		case .Authorized:
@@ -223,7 +221,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		}
 	}
 	
-	class func contactsAuthStatus() -> CRPermissionAuthStatus {
+	func contactsAuthStatus() -> CRPermissionAuthStatus {
 		
 		if #available(iOS 9.0, *) {
 			switch CNContactStore.authorizationStatusForEntityType(CNEntityType.Contacts) {
@@ -252,15 +250,15 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		}
 	}
 	
-	class func eventsAuthStatus() -> CRPermissionAuthStatus {
+	func eventsAuthStatus() -> CRPermissionAuthStatus {
 		return authStatus(forEventType: .Event)
 	}
 	
-	class func remindersAuthStatus() -> CRPermissionAuthStatus {
+	func remindersAuthStatus() -> CRPermissionAuthStatus {
 		return authStatus(forEventType: .Reminder)
 	}
 	
-	class func locationAuthStatus(type: CRLocationType) -> CRPermissionAuthStatus {
+	func locationAuthStatus() -> CRPermissionAuthStatus {
 		
 		let status = CLLocationManager.authorizationStatus()
 		
@@ -271,12 +269,12 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 			return .Restricted
 		case .Denied:
 			return .Denied
-		default:
-			switch type {
+		case .AuthorizedAlways:
+			return .Authorized
+		case .AuthorizedWhenInUse:
+			switch locationType {
 			case .Always:
-				return status == .AuthorizedAlways ? .Authorized : .Denied
-			case .WhenInUse:
-				return (status == .AuthorizedAlways || status == .AuthorizedWhenInUse) ? .Authorized : .Denied
+				return .NotDetermined
 			default:
 				return .Authorized
 			}
@@ -284,9 +282,9 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 	}
 	
 	
-	// MARK: Convenience Class Functions
+	// MARK: Convenience Functions
 	
-	private class func authStatus(forMediaType mediaType: String) -> CRPermissionAuthStatus {
+	private func authStatus(forMediaType mediaType: String) -> CRPermissionAuthStatus {
 		
 		switch AVCaptureDevice.authorizationStatusForMediaType(mediaType) {
 		case .Authorized:
@@ -300,7 +298,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		}
 	}
 	
-	private class func authStatus(forEventType eventType: EKEntityType) -> CRPermissionAuthStatus {
+	private func authStatus(forEventType eventType: EKEntityType) -> CRPermissionAuthStatus {
 		
 		switch EKEventStore.authorizationStatusForEntityType(eventType) {
 		case .Authorized:
@@ -344,13 +342,8 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		let time = dispatch_time(DISPATCH_TIME_NOW, Int64(0.3 * Double(NSEC_PER_SEC)))
 		dispatch_after(time, dispatch_get_main_queue()) {
 			
-			var status = CRPermissions.authStatus(forType: type)
-			
-			if type == .Location {
-				status = CRPermissions.locationAuthStatus(self.locationType)
-			}
-			
-			let systemResult = CRPermissions.systemResult(forStatus: status)
+			let status = self.authStatus(forType: type)
+			let systemResult = self.systemResult(forStatus: status)
 			
 			completion?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
 		}
@@ -367,7 +360,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 	func requestPhotosPermissions(completion: CRPermissionCompletionBlock?) {
 		
 		let type = CRPermissionType.Photos
-		let preStatus = CRPermissions.authStatus(forType: type)
+		let preStatus = authStatus(forType: type)
 		
 		switch preStatus {
 			
@@ -385,7 +378,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 	func requestContactsPermissions(completion: CRPermissionCompletionBlock?) {
 		
 		let type = CRPermissionType.Contacts
-		let preStatus = CRPermissions.authStatus(forType: type)
+		let preStatus = authStatus(forType: type)
 		
 		switch preStatus {
 			
@@ -429,7 +422,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		locationCompletionBlock = completion
 		
 		let type = CRPermissionType.Location
-		let preStatus = CRPermissions.authStatus(forType: type)
+		let preStatus = authStatus(forType: type)
 		
 		switch preStatus {
 			
@@ -457,7 +450,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		
 		let type: CRPermissionType = mediaType == AVMediaTypeAudio ? .Microphone : .Camera
 		
-		let preStatus = CRPermissions.authStatus(forType: type)
+		let preStatus = authStatus(forType: type)
 		
 		switch preStatus {
 			
@@ -475,7 +468,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 	func requestPermissions(forEventType eventType: EKEntityType, completion: CRPermissionCompletionBlock?) {
 		
 		let type: CRPermissionType = eventType == .Event ? .Events : .Reminders
-		let preStatus = CRPermissions.authStatus(forType: type)
+		let preStatus = authStatus(forType: type)
 		
 		switch preStatus {
 			
@@ -494,6 +487,21 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 	// MARK: - CLLocationManager Delegate Functions
 	
 	func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+		
+		switch status {
+			
+		case .NotDetermined:
+			print("locationManager didChangeAuthorizationStatus: NotDetermined")
+		case .Restricted:
+			print("locationManager didChangeAuthorizationStatus: Restricted")
+		case .Denied:
+			print("locationManager didChangeAuthorizationStatus: Denied")
+		case .AuthorizedAlways:
+			print("locationManager didChangeAuthorizationStatus: AuthorizedAlways")
+		case .AuthorizedWhenInUse:
+			print("locationManager didChangeAuthorizationStatus: AuthorizedWhenInUse")
+		}
+		
 		if status != .NotDetermined {
 			callCompletion(forType: .Location, completion: locationCompletionBlock)
 			self.locationManager?.stopUpdatingLocation()

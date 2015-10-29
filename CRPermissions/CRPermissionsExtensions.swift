@@ -282,7 +282,7 @@ extension UIViewController {
 		presentViewController(alertController, animated: true, completion: nil)
 	}
 	
-	func presentPermissionsController(controller: CRPermissionsViewController, forType type: CRPermissionType, locationType: CRLocationType = .Default, animated: Bool = true, completion: (() -> Void)? = nil) {
+	func presentPermissionsController(controller: CRPermissionsViewController, forType type: CRPermissionType, locationType: CRLocationType = .WhenInUse, animated: Bool = true, completion: (() -> Void)? = nil) {
 		controller.permissionType = type
 		controller.locationType = locationType
 		

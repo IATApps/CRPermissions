@@ -12,7 +12,7 @@ import FontAwesomeKit
 
 class ViewController: UIViewController, CRPermissionsDelegate, CRPermissionsUIDelegate {
 	
-	var locationType = CRLocationType.Default
+	var locationType = CRLocationType.WhenInUse
 	
 	// MARK: - IBActions
 	
@@ -54,7 +54,10 @@ class ViewController: UIViewController, CRPermissionsDelegate, CRPermissionsUIDe
 	
 	func requestPermission(type: CRPermissionType) {
 		
-		switch CRPermissions.permissionGranted(forType: type, locationType: locationType) {
+		let permissions = CRPermissions.sharedPermissions()
+		permissions.locationType = locationType
+		
+		switch permissions.permissionGranted(forType: type) {
 			
 		case false:
 			let permissionVC = CRPermissionsViewController()
