@@ -22,24 +22,13 @@ typealias CRPermissionCompletionBlock = (hasPermission: Bool, systemResult: CRPe
 // MARK: - Structs
 
 enum CRPermissionType: String {
-	case Camera = "Can We Access Your Camera"
-	case Microphone = "Can We Access Your Microphone"
-	case Photos = "Can We Access Your Photos"
-	case Contacts = "Can We Access Your Contacts"
-	case Events = "Can We Access Your Events"
-	case Reminders = "Can We Access Your Reminders"
-	case Location = "Can We Access Your Location"
-}
-
-enum CRPermissionResult: Int {
-	/// User was not given the chance to take action. This can happen if the permission was already granted, denied, or restricted.
-	case NoActionTaken
-	/// User declined access in the user dialog or system dialog.
-	case Denied
-	/// User granted access in the user dialog or system dialog.
-	case Granted
-	/// The iOS parental permissions prevented access. This outcome would only happen on the system dialog.
-	case ParentallyRestricted
+	case Camera = "Can We Access Your Camera?"
+	case Microphone = "Can We Access Your Microphone?"
+	case Photos = "Can We Access Your Photos?"
+	case Contacts = "Can We Access Your Contacts?"
+	case Events = "Can We Access Your Events?"
+	case Reminders = "Can We Access Your Reminders?"
+	case Location = "Can We Access Your Location?"
 }
 
 enum CRPermissionAuthStatus: Int {
@@ -51,6 +40,17 @@ enum CRPermissionAuthStatus: Int {
 	case Denied
 	/// Permission authorized.
 	case Authorized
+}
+
+enum CRPermissionResult: Int {
+	/// User was not given the chance to take action. This can happen if the permission was already granted, denied, or restricted.
+	case NoActionTaken
+	/// User declined access in the user dialog or system dialog.
+	case Denied
+	/// User granted access in the user dialog or system dialog.
+	case Granted
+	/// The iOS parental permissions prevented access. This outcome would only happen on the system dialog.
+	case ParentallyRestricted
 }
 
 enum CRLocationType: Int {
@@ -90,6 +90,13 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		return sharedInstance!
 	}
 	
+	class func openAppSettings() -> Bool {
+		if let settingsURL = NSURL(string: UIApplicationOpenSettingsURLString) {
+			return UIApplication.sharedApplication().openURL(settingsURL)
+		}
+		return false
+	}
+	
 	class func authStatus(forType type: CRPermissionType) -> CRPermissionAuthStatus {
 		
 		switch type {
@@ -110,7 +117,89 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		}
 	}
 	
-	class func permissionResult(forStatus status: CRPermissionAuthStatus) -> CRPermissionResult {
+	class func defaultTitle(forType type: CRPermissionType) -> String {
+		
+		var action = ""
+		
+		switch type {
+		case .Camera:
+			action = "Camera"
+		case .Microphone:
+			action = "Microphone"
+		case .Photos:
+			action = "Photos"
+		case .Contacts:
+			action = "Contacts"
+		case .Events:
+			action = "Events"
+		case .Reminders:
+			action = "Reminders"
+		case .Location:
+			action = "Location"
+		}
+		
+		var title = type.rawValue
+		
+		switch authStatus(forType: type) {
+			
+		case .Authorized:
+			title = "We've Can Access Your \(action)"
+			
+		case .Denied:
+			title = "You've Denied Access Your \(action)"
+			
+		case .Restricted:
+			title = "Access Your \(action)'s Been Restricted"
+			
+		default:
+			break
+		}
+		
+		return title
+	}
+	
+	class func defaultMessage(forType type: CRPermissionType) -> String {
+		
+		var action = ""
+		
+		switch type {
+		case .Camera:
+			action = "Camera"
+		case .Microphone:
+			action = "Microphone"
+		case .Photos:
+			action = "Photos"
+		case .Contacts:
+			action = "Contacts"
+		case .Events:
+			action = "Events"
+		case .Reminders:
+			action = "Reminders"
+		case .Location:
+			action = "Location"
+		}
+		
+		var message = "We need access to your \(action)"
+		
+		switch authStatus(forType: type) {
+			
+		case .Authorized:
+			message = "You've already authorized access to your \(action). Thanks!"
+			
+		case .Denied:
+			message += " and looks like you've denied access. Please enable access to your \(action) in your settings. This will restart the app."
+			
+		case .Restricted:
+			message += " and looks like access has been restricted. Please enable access to your \(action) in your settings. This will restart the app."
+			
+		default:
+			break
+		}
+		
+		return message
+	}
+	
+	private class func systemResult(forStatus status: CRPermissionAuthStatus) -> CRPermissionResult {
 		
 		switch status {
 			
@@ -261,6 +350,25 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		}
 	}
 	
+	private func callCompletion(forType type: CRPermissionType, completion: CRPermissionCompletionBlock?) {
+		
+		// Delay is for aesthetic purposes. Without it, the block is called before the System UIAlertController has completed the dismiss animation
+		
+		let time = dispatch_time(DISPATCH_TIME_NOW, Int64(0.3 * Double(NSEC_PER_SEC)))
+		dispatch_after(time, dispatch_get_main_queue()) {
+			
+			var status = CRPermissions.authStatus(forType: type)
+			
+			if type == .Location {
+				status = CRPermissions.locationAuthStatus(self.locationType)
+			}
+			
+			let systemResult = CRPermissions.systemResult(forStatus: status)
+			
+			completion?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+		}
+	}
+	
 	func requestCameraPermissions(completion: CRPermissionCompletionBlock?) {
 		requestPermissions(forMediaType: AVMediaTypeVideo, completion: completion)
 	}
@@ -279,10 +387,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		case .NotDetermined:
 			PHPhotoLibrary.requestAuthorization() {
 				(status: PHAuthorizationStatus) in
-				
-				let status = CRPermissions.authStatus(forType: type)
-				let systemResult = CRPermissions.permissionResult(forStatus: status)
-				completion?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+				self.callCompletion(forType: type, completion: completion)
 			}
 			
 		default:
@@ -303,10 +408,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 				
 				CNContactStore().requestAccessForEntityType(.Contacts) {
 					(granted: Bool, error: NSError?) in
-					
-					let status = CRPermissions.authStatus(forType: type)
-					let systemResult = CRPermissions.permissionResult(forStatus: status)
-					completion?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+					self.callCompletion(forType: type, completion: completion)
 				}
 			}
 				
@@ -317,10 +419,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 				
 				ABAddressBookRequestAccessWithCompletion(addressBook) {
 					(success: Bool, error: CFError!) -> Void in
-					
-					let status = CRPermissions.authStatus(forType: type)
-					let systemResult = CRPermissions.permissionResult(forStatus: status)
-					completion?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+					self.callCompletion(forType: type, completion: completion)
 				}
 			}
 			
@@ -339,8 +438,6 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 	}
 	
 	func requestLocationPermissions(completion: CRPermissionCompletionBlock?) {
-		
-		print("requestLocationPermissions")
 		
 		locationCompletionBlock = completion
 		
@@ -380,10 +477,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 		case .NotDetermined:
 			AVCaptureDevice.requestAccessForMediaType(mediaType) {
 				(granted: Bool) in
-				
-				let status = CRPermissions.authStatus(forType: type)
-				let systemResult = CRPermissions.permissionResult(forStatus: status)
-				completion?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+				self.callCompletion(forType: type, completion: completion)
 			}
 			
 		default:
@@ -402,10 +496,7 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 			
 			EKEventStore().requestAccessToEntityType(eventType) {
 				(granted: Bool, error: NSError?) in
-				
-				let status = CRPermissions.authStatus(forType: type)
-				let systemResult = CRPermissions.permissionResult(forStatus: status)
-				completion?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
+				self.callCompletion(forType: type, completion: completion)
 			}
 			
 		default:
@@ -416,36 +507,8 @@ class CRPermissions: NSObject, CLLocationManagerDelegate {
 	// MARK: - CLLocationManager Delegate Functions
 	
 	func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-		
-		print("manager: \(manager), status: \(status)")
-		
 		if status != .NotDetermined {
-			
-			// Delay is for aesthetic purposes. Without it, the block is called before the System UIAlertController has completed the dismiss animation
-			
-			let time = dispatch_time(DISPATCH_TIME_NOW, Int64(0.3 * Double(NSEC_PER_SEC)))
-			dispatch_after(time, dispatch_get_main_queue()) {
-				
-				let status = CRPermissions.locationAuthStatus(self.locationType)
-				let systemResult = CRPermissions.permissionResult(forStatus: status)
-				self.locationCompletionBlock?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
-				
-				self.locationManager?.stopUpdatingLocation()
-			}
-		}
-	}
-	
-	func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
-		
-		// Delay is for aesthetic purposes. Without it, the block is called before the System UIAlertController has completed the dismiss animation
-		
-		let time = dispatch_time(DISPATCH_TIME_NOW, Int64(0.3 * Double(NSEC_PER_SEC)))
-		dispatch_after(time, dispatch_get_main_queue()) {
-			
-			let status = CRPermissions.locationAuthStatus(self.locationType)
-			let systemResult = CRPermissions.permissionResult(forStatus: status)
-			self.locationCompletionBlock?(hasPermission: status == .Authorized, systemResult: systemResult, systemStatus: status)
-			
+			callCompletion(forType: .Location, completion: locationCompletionBlock)
 			self.locationManager?.stopUpdatingLocation()
 		}
 	}
