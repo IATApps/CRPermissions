@@ -122,13 +122,20 @@ class CRPermissionsViewController: UIViewController {
 		iconLabel.font = icon?.iconFont()
 		
 		let labelText: [String?] = [icon?.attributedString().string, self.title, message]
+		let labelColors = [iconLabel.textColor, UIColor.appDarkGreyColor(), UIColor.appLightGrayColor()]
 		
 		for (index, label) in [iconLabel, titleLabel, messageLabel].enumerate() {
 			label.text = labelText[index]
+			label.textColor = labelColors[index]
 		}
+		
+		let buttonTextColors = [UIColor.whiteColor(), UIColor.appDarkBlueColor()]
+		let buttonBackgroundColors = [self.view.tintColor, UIColor.clearColor()]
 		
 		for (index, button) in [actionButton, cancelButton].enumerate() {
 			button.setTitle(buttonText[index], forState: .Normal)
+			button.setTitleColor(buttonTextColors[index], forState: .Normal)
+			button.setBackgroundColor(buttonBackgroundColors[index], forState: .Normal)
 		}
 		
 		let messageHeight = messageLabel.text == nil ? 0 : messageLabel.text!.sizeWithFont(messageLabel.font, maxWidth: kLabelWidth).height
@@ -165,27 +172,16 @@ class CRPermissionsViewController: UIViewController {
 	
 	// MARK: - Load Functions
 	
-	convenience init(type: CRPermissionType, tintColor: UIColor?, icon: FAKIcon? = nil, locationType: CRLocationType = .Default) {
-		self.init()
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		self.icon = defaultIcon()
 		
-		self.restorationClass = CRPermissionsViewController.self
-		
-		self.restorationIdentifier = "CRPermissionViewControllerRestoreID"
-		self.permissionType = type
-		self.title = type.rawValue
-		self.icon = icon == nil ? self.defaultIcon() : icon
-		self.locationType = locationType
-		
-		self.view.tintColor = tintColor
-		
-		let labelFonts: [UIFont?] = [nil, UIFont.systemFontOfSize(UIFont.systemFontSize() + 4), UIFont.systemFontOfSize(UIFont.systemFontSize() - 2)]
-		let labelColors = [UIColor.appBlueColor(), UIColor.appDarkGreyColor(), UIColor.appLightGrayColor()]
+		let labelFonts: [UIFont?] = [self.icon?.iconFont(), UIFont.systemFontOfSize(UIFont.systemFontSize() + 4), UIFont.systemFontOfSize(UIFont.systemFontSize() - 2)]
 		
 		for (index, label) in [iconLabel, titleLabel, messageLabel].enumerate() {
 			
 			label.numberOfLines = 0
 			label.font = labelFonts[index]
-			label.textColor = labelColors[index]
 			label.textAlignment = .Center
 			label.userInteractionEnabled = false
 			
@@ -193,16 +189,11 @@ class CRPermissionsViewController: UIViewController {
 		}
 		
 		let buttonFonts = [UIFont.systemFontOfSize(UIFont.systemFontSize()), UIFont.systemFontOfSize(UIFont.systemFontSize() - 2)]
-		let buttonTextColors = [UIColor.whiteColor(), UIColor.appDarkBlueColor()]
-		let buttonBackgroundColors = [UIColor.appBlueColor(), UIColor.clearColor()]
 		
 		for (index, button) in [actionButton, cancelButton].enumerate() {
 			
 			button.titleLabel?.font = buttonFonts[index]
-			button.setTitleColor(buttonTextColors[index], forState: .Normal)
-			button.setBackgroundColor(buttonBackgroundColors[index], forState: .Normal)
 			button.adjustViewLayer(2.0)
-			
 			button.addTarget(self, action: Selector(buttonTargets[index]), forControlEvents: .TouchUpInside)
 			
 			view.addSubview(button)
@@ -215,11 +206,5 @@ class CRPermissionsViewController: UIViewController {
 		view.backgroundColor = UIColor.whiteColor()
 		
 		adjustView()
-	}
-	
-	override func applicationFinishedRestoringState() {
-		super.applicationFinishedRestoringState()
-		
-		print("Called \(self)")
 	}
 }

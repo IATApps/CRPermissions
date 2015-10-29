@@ -48,6 +48,16 @@ class ViewController: UIViewController, CRPermissionsDelegate {
 		requestPermission(.Location)
 	}
 	
+	// MARK: - Functions
+	
+	func requestPermission(type: CRPermissionType) {
+		let permissionVC = CRPermissionsViewController()
+		permissionVC.delegate = self
+		permissionVC.view.tintColor = UIColor.appBlueColor()
+		permissionVC.iconLabel.textColor = UIColor.appRedColor()
+		presentPermissionsController(permissionVC, forType: type, locationType: locationType)
+	}
+	
 	// MARK: - CRPermission Delegate Functions
 	
 	func permissionsController(controller: CRPermissionsViewController, didAllowPermissionForType type: CRPermissionType) {
@@ -66,15 +76,6 @@ class ViewController: UIViewController, CRPermissionsDelegate {
 	func permissionsControllerDidCancel(controller: CRPermissionsViewController) {
 		print("permissionsControllerDidCancel")
 		dismissViewControllerAnimated(true, completion: nil)
-	}
-	
-	
-	// MARK: - Functions
-	
-	func requestPermission(type: CRPermissionType) {
-		let permissionVC = CRPermissionsViewController(type: type, tintColor: UIColor.appBlueColor(), locationType: locationType)
-		permissionVC.delegate = self
-		presentViewController(permissionVC, animated: true, completion: nil)
 	}
 	
 	

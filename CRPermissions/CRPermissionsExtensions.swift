@@ -129,6 +129,11 @@ extension UIColor {
 		return UIColor(hexCode: "39AFE5", alpha: 1.0)
 	}
 	
+	/// Red Color: #EF4D60
+	class func appRedColor() -> UIColor {
+		return UIColor(hexCode: "EF4D60", alpha: 1.0)
+	}
+	
 	/// Dark Blue Color: #193643
 	class func appDarkBlueColor() -> UIColor {
 		return UIColor(hexCode: "193643", alpha: 1.0)
@@ -265,5 +270,21 @@ extension UIView {
 			superview?.layer.shadowRadius = 2.0
 			superview?.layer.shadowPath = UIBezierPath(roundedRect: superview!.bounds, cornerRadius: 100.0).CGPath
 		}
+	}
+}
+
+// MARK: -
+
+extension UIViewController {
+	
+	func presentPermissionsController(controller: CRPermissionsViewController, forType type: CRPermissionType, locationType: CRLocationType = .Default, animated: Bool = true, completion: (() -> Void)? = nil) {
+		controller.permissionType = type
+		controller.locationType = locationType
+		
+		if controller.title == nil || controller.title!.isEmpty {
+			controller.title = type.rawValue
+		}
+		
+		presentViewController(controller, animated: animated, completion: completion)
 	}
 }
