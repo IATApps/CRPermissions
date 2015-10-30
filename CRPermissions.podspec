@@ -36,5 +36,5 @@ Pod::Spec.new do |s|
     'CRPermissions' => ['CRPermissions/Assets/*.png']
   }
   
-  # s.dependency 'FontAwesomeKit'
+  s.dependency 'FontAwesomeKit'
 end
