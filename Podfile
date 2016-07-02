@@ -16,15 +16,15 @@ def app_pods
 end
 
 
-target 'CRPermissions', :exclusive => true do
+target 'CRPermissions' do
 	all_pods
 	app_pods
 end
 
-target 'CRPermissionsTests', :exclusive => true do
+target 'CRPermissionsTests' do
 	all_pods
 end
 
-target 'CRPermissionsUITests', :exclusive => true do
+target 'CRPermissionsUITests' do
 	all_pods
 end
